@@ -55,8 +55,8 @@ public class AWS {
 
     ////////////////////////////////////////// EC2
 
-    //Given by Meni to create EC2
-    public String createEC2(String script, String tagName, int numberOfInstances) {
+    // Given by Meni to create EC2
+    public String createEC2(String script, String tagName, int numberOfInstances) { // TODO add so instanceType is input
         Ec2Client ec2 = Ec2Client.builder().region(region2).build();
         RunInstancesRequest runRequest = (RunInstancesRequest) RunInstancesRequest.builder()
                 .instanceType(InstanceType.M4_LARGE)
@@ -67,7 +67,6 @@ public class AWS {
                 .iamInstanceProfile(IamInstanceProfileSpecification.builder().name("LabInstanceProfile").build())
                 .userData(Base64.getEncoder().encodeToString((script).getBytes()))
                 .build();
-
 
         RunInstancesResponse response = ec2.runInstances(runRequest);
 
@@ -96,7 +95,7 @@ public class AWS {
         return instanceId;
     }
 
-    //Create EC2 with AMI
+    // Create EC2 with AMI
     public void runInstanceFromAMI(String ami) {
         Tag tag = Tag.builder().key("Name").value("Manager").build();
         TagSpecification tagSpecification = TagSpecification.builder()
@@ -121,7 +120,7 @@ public class AWS {
         }
     }
 
-    //Terminate EC2 instance
+    // Terminate EC2 instance
     public void terminateInstance(String instanceId) {
         TerminateInstancesRequest terminateRequest = TerminateInstancesRequest.builder()
                 .instanceIds(instanceId)
@@ -135,7 +134,7 @@ public class AWS {
         }
     }
 
-    //Get all EC2 instances active
+    // Get all EC2 instances active
     public List<Instance> getAllInstances() {
         DescribeInstancesRequest request = DescribeInstancesRequest.builder().build();
         try {
@@ -149,17 +148,16 @@ public class AWS {
         }
     }
 
-    //Get all EC2 instances with a specific tag
+    // Get all EC2 instances with a specific tag
     public List<Instance> getInstancesByTag(String tagValue) {
         DescribeInstancesRequest describeInstancesRequest = DescribeInstancesRequest.builder()
                 .filters(
                         Filter.builder()
                                 .name("tag:Name")
                                 .values(tagValue)
-                                .build()
-                )
+                                .build())
                 .build();
-    
+
         try {
             DescribeInstancesResponse describeInstancesResponse = ec2.describeInstances(describeInstancesRequest);
             return describeInstancesResponse.reservations().stream()
@@ -173,7 +171,7 @@ public class AWS {
 
     ////////////////////////////////////////////// S3
 
-    //Create a bucket
+    // Create a bucket
     public void createBucket(String bucketName) {
         try {
             s3.createBucket(CreateBucketRequest.builder().bucket(bucketName).build());
@@ -183,7 +181,7 @@ public class AWS {
         }
     }
 
-    //Delete bucket
+    // Delete bucket
     public void deleteBucket(String bucketName) {
         try {
             s3.deleteBucket(DeleteBucketRequest.builder().bucket(bucketName).build());
@@ -209,7 +207,7 @@ public class AWS {
         }
     }
 
-    //Download a file from S3
+    // Download a file from S3
     public void downloadFileFromS3(String keyPath, File outputFile) {
         try {
             GetObjectRequest request = GetObjectRequest.builder()
@@ -230,7 +228,7 @@ public class AWS {
 
     ////////////////////////////////////////////// SQS
 
-    //Create a queue if it doesn't exist
+    // Create a queue if it doesn't exist
     public String createQueue(String queueName) {
         try {
             CreateQueueRequest request = CreateQueueRequest.builder()
@@ -246,7 +244,7 @@ public class AWS {
         }
     }
 
-    //Get Queue Url to get the SQS 
+    // Get Queue Url to get the SQS
     public String getQueueUrl(String queueName) {
         try {
             GetQueueUrlRequest request = GetQueueUrlRequest.builder()
@@ -267,28 +265,28 @@ public class AWS {
             if (queueUrl == null) {
                 queueUrl = createQueue(queueName);
             }
-    
+
             SendMessageRequest sendMsgRequest = SendMessageRequest.builder()
                     .queueUrl(queueUrl)
-                    .messageBody(s3Url) 
+                    .messageBody(s3Url)
                     .build();
-    
+
             sqs.sendMessage(sendMsgRequest);
             System.out.println("Message sent to SQS queue '" + queueName + "': " + s3Url);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
-    //Receive messages from SQS
+
+    // Receive messages from SQS
     public List<Message> receiveMessagesFromSQS(String queueUrl) {
         try {
             ReceiveMessageRequest request = ReceiveMessageRequest.builder()
                     .queueUrl(queueUrl)
-                    .maxNumberOfMessages(1)  
-                    .waitTimeSeconds(10) 
+                    .maxNumberOfMessages(1)
+                    .waitTimeSeconds(10)
                     .build();
-            
+
             ReceiveMessageResponse response = sqs.receiveMessage(request);
             return response.messages();
         } catch (Exception e) {
@@ -297,7 +295,7 @@ public class AWS {
         }
     }
 
-    //Delete message from SQS
+    // Delete message from SQS
     public void deleteMessageFromSQS(String queueName, String receiptHandle) {
         try {
             String queueUrl = getQueueUrl(queueName);
@@ -305,12 +303,12 @@ public class AWS {
                 System.err.println("[ERROR] Queue does not exist.");
                 return;
             }
-    
+
             DeleteMessageRequest deleteMsgRequest = DeleteMessageRequest.builder()
                     .queueUrl(queueUrl)
                     .receiptHandle(receiptHandle)
                     .build();
-    
+
             sqs.deleteMessage(deleteMsgRequest);
             System.out.println("Message deleted from SQS queue '" + queueName + "'.");
         } catch (Exception e) {
@@ -318,7 +316,7 @@ public class AWS {
         }
     }
 
-    //Delete SQS queue
+    // Delete SQS queue
     public void deleteQueue(String queueUrl) {
         try {
             sqs.deleteQueue(DeleteQueueRequest.builder().queueUrl(queueUrl).build());
@@ -328,7 +326,7 @@ public class AWS {
         }
     }
 
-    //Get SQS Size
+    // Get SQS Size
     public int getQueueSize(String queueUrl) {
         try {
             GetQueueAttributesRequest request = GetQueueAttributesRequest.builder()
@@ -345,7 +343,7 @@ public class AWS {
         }
     }
 
-    //Get type of Tag name
+    // Get type of Tag name
     public static enum Node {
         LOCAL_APPLICATION,
         MANAGER,
