@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>assignment1</groupId>
@@ -7,7 +8,7 @@
   <version>1.0-SNAPSHOT</version>
   <name>assignment1</name>
   <url>http://maven.apache.org</url>
-  
+
   <properties>
     <!-- Set Java version -->
     <maven.compiler.source>11</maven.compiler.source>
@@ -16,9 +17,9 @@
 
   <dependencies>
     <dependency>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>aws-sdk-java</artifactId>
-        <version>2.28.18</version>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>aws-sdk-java</artifactId>
+      <version>2.28.18</version>
     </dependency>
     <dependency>
       <groupId>software.amazon.awssdk</groupId>
@@ -26,19 +27,33 @@
       <version>2.28.18</version>
     </dependency>
     <dependency>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>s3</artifactId>
-        <version>2.28.18</version>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>s3</artifactId>
+      <version>2.28.18</version>
     </dependency>
     <dependency>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>sqs</artifactId>
-        <version>2.28.18</version>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>sqs</artifactId>
+      <version>2.28.18</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.pdfbox</groupId>
-        <artifactId>pdfbox</artifactId>
-        <version>2.0.19</version>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+      <version>2.0.19</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <source>11</source>
+          <target>11</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

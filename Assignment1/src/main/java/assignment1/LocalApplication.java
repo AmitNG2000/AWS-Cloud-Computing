@@ -1,3 +1,5 @@
+package assignment1;
+
 import java.io.File;
 import java.util.List;
 import software.amazon.awssdk.services.sqs.model.*;
@@ -17,17 +19,19 @@ public class LocalApplication {
 
     public static void main(String[] args) {
         AWS aws = AWS.getAWSInstance();
-        //1.
+        // 1.
         createManager(aws);
-        //2 + 3
+        // 2 + 3
         handleInput(aws, args[0]);
-        //4 + 5
+        // 4 + 5
         handleSummaryFile(aws);
 
-        //#TODO 6
+        // #TODO 6
+
     }
 
-    //1. Checks if a Manager node is active on the EC2 cloud. If it is not, the application will start the manager node. 
+    // 1. Checks if a Manager node is active on the EC2 cloud. If it is not, the
+    // application will start the manager node.
     private static void createManager(AWS aws) {
         List<Instance> managerInstance = aws.getInstancesByTag(AWS.Node.MANAGER.name());
         if (managerInstance.isEmpty()) {
@@ -36,8 +40,8 @@ public class LocalApplication {
         }
     }
 
-    //2. Uploads the file to S3
-    //3. Sends a message to an SQS queue, stating the location of the file on S3
+    // 2. Uploads the file to S3
+    // 3. Sends a message to an SQS queue, stating the location of the file on S3
     private static void handleInput(AWS aws, String inputFileName) {
         File inputFile = new File(inputFileName);
 
@@ -45,14 +49,15 @@ public class LocalApplication {
         String s3Url = aws.uploadFileToS3(keyPath, inputFile);
 
         if (s3Url != null) {
-            aws.sendMessageToSQS(AWS.LOCAL_MANAGER_QUEUE_NAME, s3Url); 
+            aws.sendMessageToSQS(AWS.LOCAL_MANAGER_QUEUE_NAME, s3Url);
         } else {
             System.err.println("File upload failed, message not sent to SQS.");
         }
     }
 
-    //4. Checks an SQS queue for a message indicating the process is done and the response (the summary file) is available on S3.
-    //5. Creates an html file representing the results
+    // 4. Checks an SQS queue for a message indicating the process is done and the
+    // response (the summary file) is available on S3.
+    // 5. Creates an html file representing the results
     private static void handleSummaryFile(AWS aws) {
         String queueUrl = aws.getQueueUrl(AWS.LOCAL_MANAGER_QUEUE_NAME);
         List<Message> messages = aws.receiveMessagesFromSQS(queueUrl);
