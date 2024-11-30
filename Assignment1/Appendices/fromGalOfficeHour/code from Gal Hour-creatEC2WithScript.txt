@@ -1,0 +1,13 @@
+private static void createEC2() {
+//        String managerScript = "#!/bin/bash\n" +
+//                "echo Manager jar running\n" +
+//                "echo s3://" + aws.bucketName + "/" + aws.managerJarKey + "\n" +
+//                "mkdir ManagerFiles\n" +
+//                "aws s3 cp s3://" + aws.bucketName + "/" + aws.managerJarKey + " ./ManagerFiles/" + aws.managerJarName + "\n" +
+//                "echo manager copy the jar from s3\n" +
+//                "java -jar /ManagerFiles/" + aws.managerJarName + "\n";
+
+        String ec2Script = "#!/bin/bash\n" +
+                "echo Hello World\n";
+        String managerInstanceID = aws.createEC2(ec2Script, "thisIsJustAString", 1);
+    }
