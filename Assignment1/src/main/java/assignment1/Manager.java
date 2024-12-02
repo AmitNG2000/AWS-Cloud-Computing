@@ -1,6 +1,5 @@
 package assignment1;
 
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,25 +26,25 @@ public class Manager {
 
     public static void main(String[] args) {
         AWS aws = AWS.getAWSInstance();
-        //1.
+        // 1.
         String s3FileKey = receiveInputMessage(aws);
         File outputFile = downloadInputFromS3(aws, s3FileKey);
-        //2.
+        // 2.
         processInputFileToSQS(aws, outputFile);
-        
+
         // Start a thread to handle worker messages continuously
         Thread workerHandlerThread = new Thread(() -> {
             try {
                 while (true) {
-                    //3.
+                    // 3.
                     handleWorkers(aws, Integer.parseInt(args[2]));
                     List<String> results = getAllWorkersMessages(aws);
-                    //4.
+                    // 4.
                     File summaryFile = createSummaryFile(results);
-                    //5. + 6.
+                    // 5. + 6.
                     uploadFileToS3AndSQS(aws, summaryFile);
 
-                    //#TODO 7.
+                    // #TODO 7.
 
                     Thread.sleep(1000); // Sleep for 1 seconds
                 }
@@ -58,7 +57,7 @@ public class Manager {
         workerHandlerThread.start(); // Start the thread
     }
 
-    //Gets the message of the location of the given input file. 
+    // Gets the message of the location of the given input file.
     private static String receiveInputMessage(AWS aws) {
         String queueUrl = aws.getQueueUrl(AWS.LOCAL_MANAGER_QUEUE_NAME);
         List<Message> messages = aws.receiveMessagesFromSQS(queueUrl);
@@ -75,15 +74,16 @@ public class Manager {
         return s3FileKey;
     }
 
-    //1. Downloads the input file from S3.
+    // 1. Downloads the input file from S3.
     private static File downloadInputFromS3(AWS aws, String s3FileKey) {
         File outputFile = new File("localFiles/" + new File(s3FileKey).getName());
-        aws.downloadFileFromS3(s3FileKey, outputFile);                                                  
+        aws.downloadFileFromS3(s3FileKey, outputFile);
         System.out.println("Input file downloaded and ready for processing: " + outputFile.getPath());
         return outputFile;
     }
 
-    //2. Creates an SQS message for each URL in the input file together with the operation that should be performed on it.
+    // 2. Creates an SQS message for each URL in the input file together with the
+    // operation that should be performed on it.
     private static void processInputFileToSQS(AWS aws, File outputFile) {
         String workerQueueUrl = aws.getQueueUrl(AWS.MANAGER_TO_WORKER_QUEUE_NAME);
         try (BufferedReader reader = new BufferedReader(new FileReader(outputFile))) {
@@ -106,30 +106,31 @@ public class Manager {
         }
     }
 
-    //3. Checks the SQS message count and starts Worker processes (nodes) accordingly.
+    // 3. Checks the SQS message count and starts Worker processes (nodes)
+    // accordingly.
     private static void handleWorkers(AWS aws, int n) {
-         String workerQueueUrl = aws.getQueueUrl(AWS.MANAGER_TO_WORKER_QUEUE_NAME);
-         int numberOfFiles = aws.getQueueSize(workerQueueUrl);
-         int numberOfActiveWorkers = aws.getInstancesByTag(AWS.Node.WORKER.name()).size();
-         int jobsPerWorker = n;
-         int numOfNewInstances = (int) (Math.ceil((numberOfFiles / jobsPerWorker)) - numberOfActiveWorkers);
-         if (numOfNewInstances > 12) {
-             System.out.println("12+ new instances requested. WE DON'T WANNA GET BANNED.");
-             return;
-         }
-         if (numOfNewInstances > 0)
-             aws.createEC2("SCRIPTHERE", AWS.Node.WORKER.name(), numOfNewInstances);
-         else {
-             int terminateNumber = Math.abs(numOfNewInstances);
-             List<Instance> workers = aws.getInstancesByTag(AWS.Node.WORKER.name());
-             for (int i = 0; i < terminateNumber; i++) {
-                 String workerId = workers.get(i).instanceId();
-                 aws.terminateInstance(workerId);
-             }
-         }
+        String workerQueueUrl = aws.getQueueUrl(AWS.MANAGER_TO_WORKER_QUEUE_NAME);
+        int numberOfFiles = aws.getQueueSize(workerQueueUrl);
+        int numberOfActiveWorkers = aws.getInstancesByTag(AWS.Node.WORKER.name()).size();
+        int jobsPerWorker = n;
+        int numOfNewInstances = (int) (Math.ceil((numberOfFiles / jobsPerWorker)) - numberOfActiveWorkers);
+        if (numOfNewInstances > 12) {
+            System.out.println("12+ new instances requested. WE DON'T WANNA GET BANNED.");
+            return;
+        }
+        if (numOfNewInstances > 0)
+            aws.createEC2("SCRIPTHERE", AWS.Node.WORKER.name(), numOfNewInstances);
+        else {
+            int terminateNumber = Math.abs(numOfNewInstances);
+            List<Instance> workers = aws.getInstancesByTag(AWS.Node.WORKER.name());
+            for (int i = 0; i < terminateNumber; i++) {
+                String workerId = workers.get(i).instanceId();
+                aws.terminateInstance(workerId);
+            }
+        }
     }
 
-    //4a. (Taken from System Summary) Manager reads all Workers' messages from SQS
+    // 4a. (Taken from System Summary) Manager reads all Workers' messages from SQS
     public static List<String> getAllWorkersMessages(AWS aws) {
         List<String> results = new ArrayList<>();
         String workerResultsQueueUrl = aws.getQueueUrl(AWS.WORKER_TO_MANAGER_QUEUE_NAME);
@@ -157,7 +158,9 @@ public class Manager {
         }
         return results;
     }
-    //4b. creates one summary file, once all URLs in the input file have been processed.
+
+    // 4b. creates one summary file, once all URLs in the input file have been
+    // processed.
     private static File createSummaryFile(List<String> results) {
         File summaryFile = new File("summary.txt");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(summaryFile))) {
@@ -172,8 +175,9 @@ public class Manager {
         return summaryFile;
     }
 
-    //5. (Taken from System Summary) Manager uploads the summary file to S3.
-    //6. (Taken from System Summary) Manager posts an SQS message about the summary file
+    // 5. (Taken from System Summary) Manager uploads the summary file to S3.
+    // 6. (Taken from System Summary) Manager posts an SQS message about the summary
+    // file
     private static void uploadFileToS3AndSQS(AWS aws, File summaryFile) {
         try {
             String s3SummaryKey = "summary/" + summaryFile.getName();
