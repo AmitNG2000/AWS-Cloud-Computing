@@ -18,6 +18,8 @@ import software.amazon.awssdk.services.ec2.model.*;
 public class LocalApplication {
 
     public static void main(String[] args) {
+
+        System.out.println("[MY_DEbug] LocalApplication Application is up");
         AWS aws = AWS.getAWSInstance();
         // 1.
         createManager(aws);
