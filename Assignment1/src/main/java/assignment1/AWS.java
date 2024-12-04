@@ -19,14 +19,16 @@ import software.amazon.awssdk.services.ec2.model.Tag;
 public class AWS {
 
     public final static String IMAGE_AMI = "ami-08902199a8aa0bc09"; // Default AMI ID
+
     public static final String LOCAL_MANAGER_QUEUE_NAME = "LocalManagerQueue";
     public static final String MANAGER_TO_WORKER_QUEUE_NAME = "LocalToManagerQueue";
     public static final String WORKER_TO_MANAGER_QUEUE_NAME = "ManagerToLocalQueue";
+    public static final String bucketName = "default-bucket";
+
     public final Region region = Region.US_WEST_2; // Default AWS Region
     private final S3Client s3;
     private final SqsClient sqs;
     private final Ec2Client ec2;
-    private String bucketName = "default-bucket"; // Default bucket name
     private static AWS instance = null;
 
     public static String ami = "ami-00e95a9222311e8ed";
@@ -48,18 +50,19 @@ public class AWS {
         return instance;
     }
 
-    // Set the bucket name dynamically
-    public void setBucketName(String bucketName) {
-        this.bucketName = bucketName;
-    }
+    // // Set the bucket name dynamically
+    // public void setBucketName(String bucketName) {
+    // this.bucketName = bucketName;
+    // }
 
     ////////////////////////////////////////// EC2
 
     // Given by Meni to create EC2
-    public String createEC2(String script, String tagName, int numberOfInstances) { // TODO add so instanceType is input
+    public String createEC2(String script, String tagName, int numberOfInstances) {
+        numberOfInstances = Math.min(9, numberOfInstances); // so not to exceed the limit for students
         Ec2Client ec2 = Ec2Client.builder().region(region2).build();
         RunInstancesRequest runRequest = (RunInstancesRequest) RunInstancesRequest.builder()
-                .instanceType(InstanceType.M4_LARGE)
+                .instanceType(InstanceType.T2_NANO)
                 .imageId(ami)
                 .maxCount(numberOfInstances)
                 .minCount(1)
@@ -95,44 +98,46 @@ public class AWS {
         return instanceId;
     }
 
-    // Create EC2 with AMI
-    public void runInstanceFromAMI(String ami) {
-        Tag tag = Tag.builder().key("Name").value("Manager").build();
-        TagSpecification tagSpecification = TagSpecification.builder()
-                .resourceType(ResourceType.INSTANCE)
-                .tags(tag)
-                .build();
+    // // Create EC2 with AMI
+    // public void runInstanceFromAMI(String ami) {
+    // Tag tag = Tag.builder().key("Name").value("Manager").build();
+    // TagSpecification tagSpecification = TagSpecification.builder()
+    // .resourceType(ResourceType.INSTANCE)
+    // .tags(tag)
+    // .build();
 
-        RunInstancesRequest runInstancesRequest = RunInstancesRequest.builder()
-                .imageId(ami)
-                .instanceType(InstanceType.T2_MICRO)
-                .minCount(1)
-                .maxCount(1)
-                .tagSpecifications(tagSpecification)
-                .build();
+    // RunInstancesRequest runInstancesRequest = RunInstancesRequest.builder()
+    // .imageId(ami)
+    // .instanceType(InstanceType.T2_MICRO)
+    // .minCount(1)
+    // .maxCount(1)
+    // .tagSpecifications(tagSpecification)
+    // .build();
 
-        try {
-            RunInstancesResponse response = ec2.runInstances(runInstancesRequest);
-            response.instances()
-                    .forEach(instance -> System.out.println("Launched instance with ID: " + instance.instanceId()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    // try {
+    // RunInstancesResponse response = ec2.runInstances(runInstancesRequest);
+    // response.instances()
+    // .forEach(instance -> System.out.println("Launched instance with ID: " +
+    // instance.instanceId()));
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
+    // }
 
-    // Terminate EC2 instance
-    public void terminateInstance(String instanceId) {
-        TerminateInstancesRequest terminateRequest = TerminateInstancesRequest.builder()
-                .instanceIds(instanceId)
-                .build();
+    // // Terminate EC2 instance
+    // public void terminateInstance(String instanceId) {
+    // TerminateInstancesRequest terminateRequest =
+    // TerminateInstancesRequest.builder()
+    // .instanceIds(instanceId)
+    // .build();
 
-        try {
-            ec2.terminateInstances(terminateRequest);
-            System.out.println("Terminated instance: " + instanceId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    // try {
+    // ec2.terminateInstances(terminateRequest);
+    // System.out.println("Terminated instance: " + instanceId);
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
+    // }
 
     // Get all EC2 instances active
     public List<Instance> getAllInstances() {
@@ -195,12 +200,12 @@ public class AWS {
     public String uploadFileToS3(String keyPath, File file) {
         try {
             PutObjectRequest request = PutObjectRequest.builder()
-                    .bucket("your-bucket-name")
+                    .bucket(bucketName)
                     .key(keyPath)
                     .build();
             s3.putObject(request, file.toPath());
             System.out.println("Uploaded file: " + file.getName());
-            return "s3://" + "your-bucket-name" + "/" + keyPath;
+            return "s3://" + bucketName + "/" + keyPath;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -348,5 +353,36 @@ public class AWS {
         LOCAL_APPLICATION,
         MANAGER,
         WORKER
+    }
+
+    // s3
+    public void createBucketIfNotExists() {
+        try {
+            s3.createBucket(CreateBucketRequest
+                    .builder()
+                    .bucket(bucketName)
+                    .createBucketConfiguration(
+                            CreateBucketConfiguration.builder()
+                                    .locationConstraint(BucketLocationConstraint.US_WEST_2)
+                                    .build())
+                    .build());
+            s3.waiter().waitUntilBucketExists(HeadBucketRequest.builder()
+                    .bucket(bucketName)
+                    .build());
+        } catch (S3Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void terminateInstance(String instanceId) {
+
+        TerminateInstancesRequest terminateRequest = TerminateInstancesRequest.builder()
+                .instanceIds(instanceId)
+                .build();
+
+        TerminateInstancesResponse terminateResponse = ec2.terminateInstances(terminateRequest);
+
+        System.out.println("Terminated instance: " + terminateResponse.terminatingInstances());
+
     }
 }

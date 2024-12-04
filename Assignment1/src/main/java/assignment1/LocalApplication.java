@@ -17,14 +17,31 @@ import software.amazon.awssdk.services.ec2.model.*;
 
 public class LocalApplication {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) { // args = [inputFileName, outputFileName, n, terminateSymbole]
 
-        System.out.println("[MY_DEbug] LocalApplication Application is up");
+        System.out.println("[MY_DEBUG] LocalApplication Application is up");
+
+        // creat AWS helper instance
         AWS aws = AWS.getAWSInstance();
+        System.out.println("[MY_DEBUG] aws was created");
+
+
+        // Parse input
+        // if (args.length != 4) {
+        //     System.out.println("Error: Expected 4 arguments - [inputFileName, outputFileName, n, terminateSymbol]");
+        //     System.exit(1);
+        // }
+        // String inputFileName = args[0];
+        // String outputFileName = args[1];
+        // String filesPerWorkers = args[2];
+        // String terminateSymbol = args[3];
+
+        String inputFileName = "inputFileName";
+
         // 1.
         createManager(aws);
         // 2 + 3
-        handleInput(aws, args[0]);
+        uploadInputToS3(aws, inputFileName);
         // 4 + 5
         handleSummaryFile(aws);
 
@@ -38,20 +55,24 @@ public class LocalApplication {
         List<Instance> managerInstance = aws.getInstancesByTag(AWS.Node.MANAGER.name());
         if (managerInstance.isEmpty()) {
             System.out.println("Manager instance not found. Starting a new one...");
-            aws.runInstanceFromAMI(AWS.IMAGE_AMI); // #TODO add my own IMAGE AMI
+            String managerScript = "TODO"; // TODO: write a manager script
+            aws.createEC2(managerScript, AWS.Node.MANAGER.name(), 1);
         }
     }
 
     // 2. Uploads the file to S3
     // 3. Sends a message to an SQS queue, stating the location of the file on S3
-    private static void handleInput(AWS aws, String inputFileName) {
-        File inputFile = new File(inputFileName);
+    private static void uploadInputToS3(AWS aws, String inputFileName) {
+
+        aws.createBucketIfNotExists();
+
+        File inputFile = new File(inputFileName); // inputfile should be in the same folder
 
         String keyPath = "inputFiles/" + inputFile.getName();
         String s3Url = aws.uploadFileToS3(keyPath, inputFile);
 
         if (s3Url != null) {
-            aws.sendMessageToSQS(AWS.LOCAL_MANAGER_QUEUE_NAME, s3Url);
+            aws.sendMessageToSQS(AWS.LOCAL_MANAGER_QUEUE_NAME, s3Url); // send inputFile's link to sqs
         } else {
             System.err.println("File upload failed, message not sent to SQS.");
         }
@@ -61,6 +82,8 @@ public class LocalApplication {
     // response (the summary file) is available on S3.
     // 5. Creates an html file representing the results
     private static void handleSummaryFile(AWS aws) {
+
+        //////////////// Downlod the summery file //////////////////////
         String queueUrl = aws.getQueueUrl(AWS.LOCAL_MANAGER_QUEUE_NAME);
         List<Message> messages = aws.receiveMessagesFromSQS(queueUrl);
 
@@ -69,7 +92,7 @@ public class LocalApplication {
             return;
         }
 
-        Message message = messages.get(0);
+        Message message = messages.get(0); // get the output
         String summaryMessage = message.body();
         System.out.println("[INFO] Received summary message from SQS: " + summaryMessage);
 
