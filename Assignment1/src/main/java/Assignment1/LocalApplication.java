@@ -1,4 +1,4 @@
-package assignment1;
+package Assignment1;
 
 import java.io.File;
 import java.util.List;
@@ -43,7 +43,7 @@ public class LocalApplication {
         // 2 + 3
         uploadInputToS3(aws, inputFileName);
         // 4 + 5
-        handleSummaryFile(aws);
+        //handleSummaryFile(aws);
 
         // #TODO 6
 
@@ -54,9 +54,11 @@ public class LocalApplication {
     private static void createManager(AWS aws) {
         List<Instance> managerInstance = aws.getInstancesByTag(AWS.Node.MANAGER.name());
         if (managerInstance.isEmpty()) {
-            System.out.println("Manager instance not found. Starting a new one...");
-            String managerScript = "TODO"; // TODO: write a manager script
+            AWS.debug("Manager instance not found. Starting a new one...");
+            String managerScript = "todo"; // TODO: write a manager script
             aws.createEC2(managerScript, AWS.Node.MANAGER.name(), 1);
+        } else {
+            AWS.debug("Manager already exists.");
         }
     }
 

@@ -1,4 +1,4 @@
-package assignment1;
+package Assignment1;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,7 +25,7 @@ public class AWS {
     public static final String WORKER_TO_MANAGER_QUEUE_NAME = "ManagerToLocalQueue";
     public static final String bucketName = "default-bucket";
 
-    public final Region region = Region.US_WEST_2; // Default AWS Region
+    public final Region region = Region.US_EAST_1; // Default AWS Region
     private final S3Client s3;
     private final SqsClient sqs;
     private final Ec2Client ec2;
@@ -40,6 +40,10 @@ public class AWS {
         s3 = S3Client.builder().region(region).build();
         sqs = SqsClient.builder().region(region).build();
         ec2 = Ec2Client.builder().region(region).build();
+    }
+
+    public static void debug(String text) {
+        System.out.println("[DEBUG] " + text);
     }
 
     // Thread-safe Singleton implementation

@@ -1,4 +1,4 @@
-package assignment1;
+package Assignment1;
 
 import software.amazon.awssdk.services.sqs.model.Message;
 import java.io.File;
