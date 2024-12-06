@@ -92,7 +92,7 @@ public class Manager {
             AWS.debug("Starting to processInputFile...");
             //AWS.debug_messages = false;
             int temp = 0; //#TODO change this, this takes too long
-            while ((line = reader.readLine()) != null && temp < 15) {
+            while ((line = reader.readLine()) != null && temp < 50) {
                 temp ++;
                 if (line.trim().equals("terminate")) { // #TODO Ask how terminate message is given
                     AWS.debug("FOUND TERMINATE");

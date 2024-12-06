@@ -43,6 +43,7 @@ public class AWS {
     }
 
     public static boolean debug_messages = true;
+
     public static void debug(String text) {
         if (debug_messages)
             System.out.println("[DEBUG] " + text);
@@ -360,9 +361,8 @@ public class AWS {
                     .queueUrl(queueUrl)
                     .receiptHandle(receiptHandle)
                     .build();
-
             sqs.deleteMessage(deleteMsgRequest);
-            System.out.println("Message deleted from SQS queue '" + queueName + "'.");
+            debug("Message deleted from SQS queue '" + queueName + "'.");
         } catch (Exception e) {
             e.printStackTrace();
         }
