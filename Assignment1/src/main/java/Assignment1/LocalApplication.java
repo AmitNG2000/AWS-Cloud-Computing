@@ -63,20 +63,25 @@ public class LocalApplication {
     // 2. Uploads the file to S3
     // 3. Sends a message to an SQS queue, stating the location of the file on S3
     private static void uploadInputToS3(AWS aws, String inputFileName) {
-
-        aws.createBucketIfNotExists();
-
+        aws.createBucketIfDoesntExists();
+    
         File inputFile = new File(inputFileName); // inputfile should be in the same folder
-
-        //String keyPath = "inputFiles/" + inputFile.getName();
-        //String s3Url = aws.uploadFileToS3(keyPath, inputFile);
-
-        //if (s3Url != null) {
-        //    aws.sendMessageToSQS(AWS.LOCAL_MANAGER_QUEUE_NAME, s3Url); // send inputFile's link to sqs
-        //} else {
-        //    System.err.println("File upload failed, message not sent to SQS.");
-        //}
+        String keyPath = "inputFiles/" + inputFile.getName();
+    
+        if (aws.doesFileExistInS3(keyPath)) {
+            AWS.debug("File " + keyPath + " already exists in S3. Skipping upload.");
+            return; 
+        }
+    
+        String s3Url = aws.uploadFileToS3(keyPath, inputFile);
+    
+        if (s3Url != null) {
+            aws.sendMessageToSQS(AWS.LOCAL_MANAGER_QUEUE_NAME, s3Url); 
+        } else {
+            AWS.debug("File upload failed, message not sent to SQS.");
+        }
     }
+    
 
     // 4. Checks an SQS queue for a message indicating the process is done and the
     // response (the summary file) is available on S3.

@@ -200,7 +200,7 @@ public class AWS {
         }
     }
 
-    public void createBucketIfNotExists() {
+    public void createBucketIfDoesntExists() {
         try {
             s3.createBucket(CreateBucketRequest
                     .builder()
@@ -210,7 +210,7 @@ public class AWS {
             s3.waiter().waitUntilBucketExists(HeadBucketRequest.builder()
                     .bucket(bucketName)
                     .build());
-            System.out.println("Bucket created successfully!");
+            AWS.debug("Bucket created successfully or already exists.");
         } catch (S3Exception e) {
             System.out.println(e.getMessage());
         }
@@ -251,6 +251,24 @@ public class AWS {
         }
     }
 
+    public boolean doesFileExistInS3(String keyPath) {
+        try {
+            HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(keyPath)
+                    .build();
+    
+            s3.headObject(headObjectRequest);
+            return true; 
+        } catch (NoSuchKeyException e) {
+            return false;
+        } catch (S3Exception e) {
+            System.err.println("S3 error: " + e.getMessage());
+            return false;
+        }
+    }
+    
+
     ////////////////////////////////////////////// SQS
 
     // Create a queue if it doesn't exist
@@ -261,7 +279,7 @@ public class AWS {
                     .build();
             CreateQueueResponse response = sqs.createQueue(request);
             String queueUrl = response.queueUrl();
-            System.out.println("Queue created: " + queueName + " URL: " + queueUrl);
+            debug("Queue created: " + queueName);
             return queueUrl;
         } catch (Exception e) {
             e.printStackTrace();
@@ -277,11 +295,18 @@ public class AWS {
                     .build();
             GetQueueUrlResponse response = sqs.getQueueUrl(request);
             return response.queueUrl();
+        } catch (QueueDoesNotExistException e) {
+            debug("Queue " + queueName + " does not exist.");
+            return null;
+        } catch (SqsException e) {
+            debug("SQS error occurred: " + e.getMessage());
+            return null;
         } catch (Exception e) {
-            e.printStackTrace();
+            debug("Unexpected error: " + e.getMessage());
             return null;
         }
     }
+    
 
     // Send a message to SQS
     public void sendMessageToSQS(String queueName, String s3Url) {
