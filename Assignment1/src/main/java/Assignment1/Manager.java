@@ -32,8 +32,11 @@ public class Manager {
         // 2.
         processInputFileToSQS(aws, inputFile);
 
-        /*
+        //temp here to test 1
+        handleWorkers(aws, Integer.parseInt(args[2]));
+        
         // Start a thread to handle worker messages continuously
+        /* 
         Thread workerHandlerThread = new Thread(() -> {
             try {
                 while (true) {
@@ -41,13 +44,13 @@ public class Manager {
                     handleWorkers(aws, Integer.parseInt(args[2]));
                     List<String> results = getAllWorkersMessages(aws);
                     // 4.
-                    File summaryFile = createSummaryFile(results);
+                    //File summaryFile = createSummaryFile(results);
                     // 5. + 6.
-                    uploadFileToS3AndSQS(aws, summaryFile);
+                    //uploadFileToS3AndSQS(aws, summaryFile);
 
                     // #TODO 7.
 
-                    Thread.sleep(1000); // Sleep for 1 seconds
+                    Thread.sleep(1000 * 1000); // Sleep for 1 seconds
                 }
             } catch (Exception e) {
                 System.err.println("[ERROR] Exception in worker handling thread: " + e.getMessage());
@@ -57,6 +60,7 @@ public class Manager {
 
         workerHandlerThread.start(); // Start the thread
         */
+        
     }
 
     // Gets the message of the location of the given input file.
@@ -90,23 +94,19 @@ public class Manager {
         try (BufferedReader reader = new BufferedReader(new FileReader(outputFile))) {
             String line;
             AWS.debug("Starting to processInputFile...");
-            //AWS.debug_messages = false;
+            AWS.debug_messages = false;
             int temp = 0; //#TODO change this, this takes too long
-            while ((line = reader.readLine()) != null && temp < 50) {
+            while ((line = reader.readLine()) != null && temp < 15) {
                 temp ++;
-                if (line.trim().equals("terminate")) { // #TODO Ask how terminate message is given
-                    AWS.debug("FOUND TERMINATE");
-                    break;
-                }
 
                 if (!line.trim().isEmpty() && line.contains("\t")) {
                     aws.sendMessageToSQS(AWS.MANAGER_TO_WORKER_QUEUE_NAME, line.trim());
-                    AWS.debug("Message sent to worker queue: " + line);
+                    //AWS.debug("Message sent to worker queue: " + line);
                 } else {
                     System.err.println("Skipping invalid line: " + line);
                 }
             }
-            //AWS.debug_messages = true;
+            AWS.debug_messages = true;
             AWS.debug("Finished processing InputFile.");
         } catch (IOException e) {
             e.printStackTrace();
@@ -116,24 +116,51 @@ public class Manager {
     // 3. Checks the SQS message count and starts Worker processes (nodes)
     // accordingly.
     private static void handleWorkers(AWS aws, int n) {
-        String workerQueueUrl = aws.getQueueUrl(AWS.MANAGER_TO_WORKER_QUEUE_NAME);
-        int numberOfFiles = aws.getQueueSize(workerQueueUrl);
-        int numberOfActiveWorkers = aws.getInstancesByTag(AWS.Node.WORKER.name()).size();
-        int jobsPerWorker = n;
-        int numOfNewInstances = (int) (Math.ceil((numberOfFiles / jobsPerWorker)) - numberOfActiveWorkers);
-        if (numOfNewInstances > 4) {
-            System.out.println("9+ new instances requested. WE DON'T WANNA GET BANNED.");
-            return;
-        }
-        if (numOfNewInstances > 0)
-            aws.createEC2("SCRIPTHERE", AWS.Node.WORKER.name(), numOfNewInstances);
-        else {
-            int terminateNumber = Math.abs(numOfNewInstances);
-            List<Instance> workers = aws.getInstancesByTag(AWS.Node.WORKER.name());
-            for (int i = 0; i < terminateNumber; i++) {
-                String workerId = workers.get(i).instanceId();
-                aws.terminateInstance(workerId);
-            }
+        String script = 
+    "#!/bin/bash\n" +
+    "sudo apt update -y\n" +
+    "sudo apt install -y default-jdk maven awscli\n" +
+    "mkdir -p /home/ubuntu/worker\n" +
+    "cd /home/ubuntu/worker\n" +
+    "aws s3 cp s3://myjarsbucket/Worker.jar /home/ubuntu/worker/Worker.jar\n" +
+    "aws s3 cp s3://myjarsbucket/pom.xml /home/ubuntu/worker/pom.xml\n" +
+    "mvn dependency:copy-dependencies\n" +
+    "java -cp Worker.jar:dependency/* Assignment1.Worker input-sample-1.txt outputFileName.txt 500 terminateLocaaws > /home/ubuntu/worker/worker.log 2>&1 &\n";
+
+    String script2 = "#!/bin/bash\n" +
+                "\n" +
+                "# Set AWS credentials as environment variables\n" +
+                "export AWS_ACCESS_KEY_ID=\"\"\n" + //todo: insert credentials
+                "export AWS_SECRET_ACCESS_KEY=\"\"\n" + //todo: insert credentials
+                "export AWS_SESSION_TOKEN=\"\"\n" + //todo: insert credentials
+                "aws s3 cp s3://configure041220241401/Worker.zip /tmp/Worker.zip\n" + // todo: insert relevant zip location in s3
+                "\n" +
+                "# Extract the JAR file from the ZIP (replace 'password' with the actual password)\n" +
+                "unzip -P password /tmp/Worker.zip -d /tmp\n" + // Ensure unzip is installed on the machine
+                "\n" +
+                "# Run the JAR file\n" +
+                "java -jar /tmp/Worker.jar\n";
+
+
+
+       // String workerQueueUrl = aws.getQueueUrl(AWS.MANAGER_TO_WORKER_QUEUE_NAME);
+       // int numberOfFiles = aws.getQueueSize(workerQueueUrl);
+        //int numberOfActiveWorkers = aws.getInstancesByTag(AWS.Node.WORKER.name()).size();
+       // int jobsPerWorker = n;
+       // int numOfNewInstances = (int) (Math.ceil((numberOfFiles / jobsPerWorker)) - numberOfActiveWorkers);
+       //if (numOfNewInstances > 4) {
+        //    System.out.println("9+ new instances requested. WE DON'T WANNA GET BANNED.");
+        //    return;
+        //}
+        //if (numOfNewInstances > 0)
+            aws.createEC2(script, AWS.Node.WORKER.name(), 1);
+        //else {
+        //    int terminateNumber = Math.abs(numOfNewInstances);
+        //    List<Instance> workers = aws.getInstancesByTag(AWS.Node.WORKER.name());
+        //    for (int i = 0; i < terminateNumber; i++) {
+        //        String workerId = workers.get(i).instanceId();
+        //        aws.terminateInstance(workerId);
+        //    }
         }
     }
 

@@ -53,7 +53,7 @@
             <configuration>
                 <archive>
                     <manifest>
-                        <mainClass>Assignment1.LocalApplication</mainClass>
+                        <mainClass>Assignment1.Manager</mainClass>
                     </manifest>
                 </archive>
             </configuration>
