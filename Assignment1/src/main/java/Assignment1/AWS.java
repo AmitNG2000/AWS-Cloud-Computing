@@ -42,8 +42,10 @@ public class AWS {
         ec2 = Ec2Client.builder().region(region).build();
     }
 
+    public static boolean debug_messages = true;
     public static void debug(String text) {
-        System.out.println("[DEBUG] " + text);
+        if (debug_messages)
+            System.out.println("[DEBUG] " + text);
     }
 
     // Thread-safe Singleton implementation
@@ -225,7 +227,7 @@ public class AWS {
                     .build();
             s3.putObject(request, file.toPath());
             System.out.println("Uploaded file: " + file.getName());
-            return "s3://" + bucketName + "/" + keyPath;
+            return keyPath;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -322,7 +324,7 @@ public class AWS {
                     .build();
 
             sqs.sendMessage(sendMsgRequest);
-            System.out.println("Message sent to SQS queue '" + queueName + "': " + s3Url);
+            debug("Message sent to SQS queue '" + queueName + "': " + s3Url);
         } catch (Exception e) {
             e.printStackTrace();
         }

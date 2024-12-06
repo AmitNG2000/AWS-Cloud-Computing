@@ -28,10 +28,11 @@ public class Manager {
         AWS aws = AWS.getAWSInstance();
         // 1.
         String s3FileKey = receiveInputMessage(aws);
-        File outputFile = downloadInputFromS3(aws, s3FileKey);
+        File inputFile = downloadInputFromS3(aws, s3FileKey);
         // 2.
-        processInputFileToSQS(aws, outputFile);
+        processInputFileToSQS(aws, inputFile);
 
+        /*
         // Start a thread to handle worker messages continuously
         Thread workerHandlerThread = new Thread(() -> {
             try {
@@ -55,6 +56,7 @@ public class Manager {
         });
 
         workerHandlerThread.start(); // Start the thread
+        */
     }
 
     // Gets the message of the location of the given input file.
@@ -76,7 +78,7 @@ public class Manager {
 
     // 1. Downloads the input file from S3.
     private static File downloadInputFromS3(AWS aws, String s3FileKey) {
-        File outputFile = new File("localFiles/" + new File(s3FileKey).getName());
+        File outputFile = new File(new File(s3FileKey).getName());
         aws.downloadFileFromS3(s3FileKey, outputFile);
         System.out.println("Input file downloaded and ready for processing: " + outputFile.getPath());
         return outputFile;
@@ -85,22 +87,27 @@ public class Manager {
     // 2. Creates an SQS message for each URL in the input file together with the
     // operation that should be performed on it.
     private static void processInputFileToSQS(AWS aws, File outputFile) {
-        String workerQueueUrl = aws.getQueueUrl(AWS.MANAGER_TO_WORKER_QUEUE_NAME);
         try (BufferedReader reader = new BufferedReader(new FileReader(outputFile))) {
             String line;
-            while ((line = reader.readLine()) != null) {
+            AWS.debug("Starting to processInputFile...");
+            //AWS.debug_messages = false;
+            int temp = 0; //#TODO change this, this takes too long
+            while ((line = reader.readLine()) != null && temp < 15) {
+                temp ++;
                 if (line.trim().equals("terminate")) { // #TODO Ask how terminate message is given
-                    // #TODO TERMINATE EVERYTHING THEY WANT
+                    AWS.debug("FOUND TERMINATE");
                     break;
                 }
 
                 if (!line.trim().isEmpty() && line.contains("\t")) {
-                    aws.sendMessageToSQS(workerQueueUrl, line.trim());
-                    System.out.println("Message sent to worker queue: " + line);
+                    aws.sendMessageToSQS(AWS.MANAGER_TO_WORKER_QUEUE_NAME, line.trim());
+                    AWS.debug("Message sent to worker queue: " + line);
                 } else {
                     System.err.println("Skipping invalid line: " + line);
                 }
             }
+            //AWS.debug_messages = true;
+            AWS.debug("Finished processing InputFile.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -114,8 +121,8 @@ public class Manager {
         int numberOfActiveWorkers = aws.getInstancesByTag(AWS.Node.WORKER.name()).size();
         int jobsPerWorker = n;
         int numOfNewInstances = (int) (Math.ceil((numberOfFiles / jobsPerWorker)) - numberOfActiveWorkers);
-        if (numOfNewInstances > 12) {
-            System.out.println("12+ new instances requested. WE DON'T WANNA GET BANNED.");
+        if (numOfNewInstances > 4) {
+            System.out.println("9+ new instances requested. WE DON'T WANNA GET BANNED.");
             return;
         }
         if (numOfNewInstances > 0)
