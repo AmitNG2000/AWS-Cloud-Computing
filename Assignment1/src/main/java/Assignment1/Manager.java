@@ -161,7 +161,7 @@ public class Manager {
         //        String workerId = workers.get(i).instanceId();
         //        aws.terminateInstance(workerId);
         //    }
-        }
+        //}
     }
 
     // 4a. (Taken from System Summary) Manager reads all Workers' messages from SQS
