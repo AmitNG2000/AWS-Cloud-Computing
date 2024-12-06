@@ -19,24 +19,22 @@ public class LocalApplication {
 
     public static void main(String[] args) { // args = [inputFileName, outputFileName, n, terminateSymbole]
 
-        System.out.println("[MY_DEBUG] LocalApplication Application is up");
+        AWS.debug("LocalApplication Application is up");
 
         // creat AWS helper instance
         AWS aws = AWS.getAWSInstance();
-        System.out.println("[MY_DEBUG] aws was created");
+        AWS.debug("aws was created");
 
 
         // Parse input
-        // if (args.length != 4) {
-        //     System.out.println("Error: Expected 4 arguments - [inputFileName, outputFileName, n, terminateSymbol]");
-        //     System.exit(1);
-        // }
-        // String inputFileName = args[0];
-        // String outputFileName = args[1];
-        // String filesPerWorkers = args[2];
-        // String terminateSymbol = args[3];
-
-        String inputFileName = "inputFileName";
+         if (args.length != 4) {
+             AWS.debug("Error: Expected 4 arguments - [inputFileName, outputFileName, n, terminateSymbol]");
+             System.exit(1);
+         }
+        String inputFileName = args[0];
+        String outputFileName = args[1];
+        String filesPerWorkers = args[2];
+        String terminateSymbol = args[3];
 
         // 1.
         createManager(aws);
@@ -70,14 +68,14 @@ public class LocalApplication {
 
         File inputFile = new File(inputFileName); // inputfile should be in the same folder
 
-        String keyPath = "inputFiles/" + inputFile.getName();
-        String s3Url = aws.uploadFileToS3(keyPath, inputFile);
+        //String keyPath = "inputFiles/" + inputFile.getName();
+        //String s3Url = aws.uploadFileToS3(keyPath, inputFile);
 
-        if (s3Url != null) {
-            aws.sendMessageToSQS(AWS.LOCAL_MANAGER_QUEUE_NAME, s3Url); // send inputFile's link to sqs
-        } else {
-            System.err.println("File upload failed, message not sent to SQS.");
-        }
+        //if (s3Url != null) {
+        //    aws.sendMessageToSQS(AWS.LOCAL_MANAGER_QUEUE_NAME, s3Url); // send inputFile's link to sqs
+        //} else {
+        //    System.err.println("File upload failed, message not sent to SQS.");
+        //}
     }
 
     // 4. Checks an SQS queue for a message indicating the process is done and the

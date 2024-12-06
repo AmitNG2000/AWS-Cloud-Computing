@@ -23,7 +23,7 @@ public class AWS {
     public static final String LOCAL_MANAGER_QUEUE_NAME = "LocalManagerQueue";
     public static final String MANAGER_TO_WORKER_QUEUE_NAME = "LocalToManagerQueue";
     public static final String WORKER_TO_MANAGER_QUEUE_NAME = "ManagerToLocalQueue";
-    public static final String bucketName = "default-bucket";
+    public static final String bucketName = "localapplicationbucket";
 
     public final Region region = Region.US_EAST_1; // Default AWS Region
     private final S3Client s3;
@@ -200,6 +200,22 @@ public class AWS {
         }
     }
 
+    public void createBucketIfNotExists() {
+        try {
+            s3.createBucket(CreateBucketRequest
+                    .builder()
+                    .bucket(bucketName)
+                    .build()); // No locationConstraint for US_EAST_1
+    
+            s3.waiter().waitUntilBucketExists(HeadBucketRequest.builder()
+                    .bucket(bucketName)
+                    .build());
+            System.out.println("Bucket created successfully!");
+        } catch (S3Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     // Upload a file to S3
     public String uploadFileToS3(String keyPath, File file) {
         try {
@@ -358,25 +374,7 @@ public class AWS {
         MANAGER,
         WORKER
     }
-
-    // s3
-    public void createBucketIfNotExists() {
-        try {
-            s3.createBucket(CreateBucketRequest
-                    .builder()
-                    .bucket(bucketName)
-                    .createBucketConfiguration(
-                            CreateBucketConfiguration.builder()
-                                    .locationConstraint(BucketLocationConstraint.US_WEST_2)
-                                    .build())
-                    .build());
-            s3.waiter().waitUntilBucketExists(HeadBucketRequest.builder()
-                    .bucket(bucketName)
-                    .build());
-        } catch (S3Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
+    
 
     public void terminateInstance(String instanceId) {
 
