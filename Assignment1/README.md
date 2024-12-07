@@ -4,7 +4,7 @@
 
 # READEME
 
-## How to run:
+## How to run
 
 <br />
 
@@ -19,7 +19,11 @@ java -cp target/Assignment1-1.0-SNAPSHOT.jar:target/dependency/\* Assignment1.Lo
 <br />
 <br />
 
+**Runing with Amazon Web Services**
+
 **We used instance of type T2_NANO with ami: "ami-00e95a9222311e8ed".**
+
+<!-- dealete ami if publied  -->
 
 <br />
 
@@ -81,3 +85,5 @@ The system is persistent and can handle the failure of of its components.
 The system consists of multiple independent components, each operating on separate machines. These components communicate through shared storage (S3) and message queues (SQS), enabling them to function autonomously while exchanging data.
 
 The system operates in parallel as tasks are processed concurrently by multiple Worker Nodes. The workers do not wait for others to finish and can independently retrieve additional tasks from the queue.
+
+<!-- TODO, add reference to threads -->
