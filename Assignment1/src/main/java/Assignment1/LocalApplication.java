@@ -56,25 +56,18 @@ public class LocalApplication {
     // 1. Checks if a Manager node is active on the EC2 cloud. If it is not, the
     // application will start the manager node.
     private static void createManager(AWS aws) {
-        String script = "#!/bin/bash\n" +
-                "# Set AWS credentials as environment variables\n" +
-                "export AWS_ACCESS_KEY_ID=\"ASIAVA66XFVHU3SKH327\"\n" +
-                "export AWS_SECRET_ACCESS_KEY=\"Whp4TPhDQvRiSdVbZgyXVq5XZHR60Yw1flWQHlDi\"\n" +
-                "export AWS_SESSION_TOKEN=\"IQoJb3JpZ2luX2VjEKH//////////wEaCXVzLXdlc3QtMiJHMEUCIQC0hZp2ZkoljTU7iFw5dK478tSrx4ihWIHYowKaRDmeAgIgGZuF5hlrw5GLE1VD4xRJJM29nylxMNfzT3bXI6PgdcgqsQIIWhABGgwzNDU2NzUwODMwODciDGyhMm7fDNQIdwHKTiqOAiXR51qb74YcklkER/pMfg3b6mH2JChHXDVRxhWuMssISSGm5ofpeO4c2GmDJsYCoMsrdCPyrHDE624VNdO8CrhtRTsmLwqQ98Nt8zdTd7ez5X6TeEbcDKjrNVVk8kmk2PJxx2bON7PSCkVT6oZfOI9123/ErKHqg9eqpVFm6Vbf/Pn4MjNGqJUw4jM4cKJxD5XzbyKjpQZuirUI4SLFtqFb7YLkeYHeFA1TanihCeDii2rkC+sQJPQOA1Y74Z+PfB7DhUsdnGW4cEUUvz4eMOmCk0Ntr8SdVJWXn8ubCTwanmJiMbdK5S9U9R7tzs/IflUh3IzHzPEssF4d+rJSMD+VfmGsxJWn+Vmd4bVIjTCPwdW6BjqdARnRZh8slsRWhFD3O4vXvxPn12mQz6QBlxJBwpNcZk6npqJkX7UQx765lIK6hHqlXLauCvdNgWhW6QFCnEqsuMT/xOU0GL2JXugTDz6ghhJwslKSrLPFDtiE4FN+OvEUXa1rEe7H536QiuWLxbXyqyZH5mCQLDJ+tVkjnvp4WHhRXWX33Wi3Fg74yhYdOq7IUMeaL8xmxA7l312HN9Y=\"\n" +
-                "\n" +
-                "mkdir -p /home/ubuntu/manager\n" +
-                "cd /home/ubuntu/manager\n" +
-                "aws s3 cp s3://myjarsbucket/Assignment1-1.0-SNAPSHOT.jar /home/ubuntu/manager/Assignment1-1.0-SNAPSHOT.jar\n" +
-                "aws s3 cp s3://myjarsbucket/pom.xml /home/ubuntu/manager/pom.xml\n" +
-                "mvn dependency:copy-dependencies\n" +
-                "java -cp Assignment1-1.0-SNAPSHOT.jar:dependency/* Assignment1.Manager input-sample-1.txt outputFileName.txt 500 terminateLocaaws > /home/ubuntu/manager/manager.log 2>&1 &";
-
-
+        String managerScript = "#!/bin/bash\n" +
+        "echo Manager jar running\n" +
+        "echo s3://myjarsbucket/Manager.jar\n" +
+        "mkdir ManagerFiles\n" +
+        "aws s3 cp s3://myjarsbucket/Manager.jar ./ManagerFiles/Manager.jar\n" +
+        "echo manager copied the jar from s3\n" +
+        "java -jar ./ManagerFiles/Manager.jar input-sample-1.txt outputFileName.txt 10 terminate\n"; //#TODO Enter the args values
 
         List<Instance> managerInstance = aws.getRunningInstancesByTag(AWS.Node.MANAGER.name());
         if (managerInstance.isEmpty()) {
             AWS.debug("Manager instance not found. Starting a new one...");
-            aws.createEC2(script, AWS.Node.MANAGER.name(), 1);
+            aws.createEC2(managerScript, AWS.Node.MANAGER.name(), 1);
         } else {
             AWS.debug("Manager already exists.");
         }

@@ -30,7 +30,7 @@ public class Manager {
         String s3FileKey = receiveInputMessage(aws);
         File inputFile = downloadInputFromS3(aws, s3FileKey);
         // 2.
-        //processInputFileToSQS(aws, inputFile);
+        processInputFileToSQS(aws, inputFile);
 
         List<String> results = getAllWorkersMessages(aws);
         //4

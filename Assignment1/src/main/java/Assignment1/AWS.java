@@ -55,7 +55,7 @@ public class AWS {
 
     public static final String LOCAL_MANAGER_QUEUE_NAME = "LocalManagerQueue";
     public static final String MANAGER_TO_WORKER_QUEUE_NAME = "LocalToManagerQueue";
-    public static final String WORKER_TO_MANAGER_QUEUE_NAME = "ManagerToLocalQueue";
+    public static final String WORKER_TO_MANAGER_QUEUE_NAME = "ManagerToLocalQueue"; //#TODO CHANGE THE NAME
     public static final String bucketName = "localapplicationbucket";
 
     public final Region region = Region.US_EAST_1; // Default AWS Region
