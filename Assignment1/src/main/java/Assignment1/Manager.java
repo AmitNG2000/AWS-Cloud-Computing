@@ -8,8 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import software.amazon.awssdk.services.sqs.model.*;
-import software.amazon.awssdk.services.ec2.model.*;
+
+import software.amazon.awssdk.services.sqs.model.Message;
 
 /*
  * The Manager
@@ -30,10 +30,13 @@ public class Manager {
         String s3FileKey = receiveInputMessage(aws);
         File inputFile = downloadInputFromS3(aws, s3FileKey);
         // 2.
-        processInputFileToSQS(aws, inputFile);
+        //processInputFileToSQS(aws, inputFile);
 
-        //temp here to test 1
-        handleWorkers(aws, Integer.parseInt(args[2]));
+        List<String> results = getAllWorkersMessages(aws);
+        //4
+        File summaryFile = createSummaryFile(results);
+        // 5. + 6.
+        uploadFileToS3AndSQS(aws, summaryFile);
         
         // Start a thread to handle worker messages continuously
         /* 
@@ -130,16 +133,16 @@ public class Manager {
     String script2 = "#!/bin/bash\n" +
                 "\n" +
                 "# Set AWS credentials as environment variables\n" +
-                "export AWS_ACCESS_KEY_ID=\"\"\n" + //todo: insert credentials
-                "export AWS_SECRET_ACCESS_KEY=\"\"\n" + //todo: insert credentials
-                "export AWS_SESSION_TOKEN=\"\"\n" + //todo: insert credentials
-                "aws s3 cp s3://configure041220241401/Worker.zip /tmp/Worker.zip\n" + // todo: insert relevant zip location in s3
+                "export AWS_ACCESS_KEY_ID=\"ASIAVA66XFVHU3SKH327\"\n" +
+                "export AWS_SECRET_ACCESS_KEY=\"Whp4TPhDQvRiSdVbZgyXVq5XZHR60Yw1flWQHlDi\"\n" +
+                "export AWS_SESSION_TOKEN=\"IQoJb3JpZ2luX2VjEKH//////////wEaCXVzLXdlc3QtMiJHMEUCIQC0hZp2ZkoljTU7iFw5dK478tSrx4ihWIHYowKaRDmeAgIgGZuF5hlrw5GLE1VD4xRJJM29nylxMNfzT3bXI6PgdcgqsQIIWhABGgwzNDU2NzUwODMwODciDGyhMm7fDNQIdwHKTiqOAiXR51qb74YcklkER/pMfg3b6mH2JChHXDVRxhWuMssISSGm5ofpeO4c2GmDJsYCoMsrdCPyrHDE624VNdO8CrhtRTsmLwqQ98Nt8zdTd7ez5X6TeEbcDKjrNVVk8kmk2PJxx2bON7PSCkVT6oZfOI9123/ErKHqg9eqpVFm6Vbf/Pn4MjNGqJUw4jM4cKJxD5XzbyKjpQZuirUI4SLFtqFb7YLkeYHeFA1TanihCeDii2rkC+sQJPQOA1Y74Z+PfB7DhUsdnGW4cEUUvz4eMOmCk0Ntr8SdVJWXn8ubCTwanmJiMbdK5S9U9R7tzs/IflUh3IzHzPEssF4d+rJSMD+VfmGsxJWn+Vmd4bVIjTCPwdW6BjqdARnRZh8slsRWhFD3O4vXvxPn12mQz6QBlxJBwpNcZk6npqJkX7UQx765lIK6hHqlXLauCvdNgWhW6QFCnEqsuMT/xOU0GL2JXugTDz6ghhJwslKSrLPFDtiE4FN+OvEUXa1rEe7H536QiuWLxbXyqyZH5mCQLDJ+tVkjnvp4WHhRXWX33Wi3Fg74yhYdOq7IUMeaL8xmxA7l312HN9Y=\"\n" +
                 "\n" +
-                "# Extract the JAR file from the ZIP (replace 'password' with the actual password)\n" +
-                "unzip -P password /tmp/Worker.zip -d /tmp\n" + // Ensure unzip is installed on the machine
+                "# Download the JAR file from the S3 bucket\n" +
+                "aws s3 cp s3://myjarsbucket/Worker.jar /tmp/Worker.jar\n" +
                 "\n" +
                 "# Run the JAR file\n" +
                 "java -jar /tmp/Worker.jar\n";
+
 
 
 
@@ -153,7 +156,7 @@ public class Manager {
         //    return;
         //}
         //if (numOfNewInstances > 0)
-            aws.createEC2(script, AWS.Node.WORKER.name(), 1);
+            //aws.createEC2(script2, AWS.Node.WORKER.name(), 1);
         //else {
         //    int terminateNumber = Math.abs(numOfNewInstances);
         //    List<Instance> workers = aws.getInstancesByTag(AWS.Node.WORKER.name());
@@ -170,7 +173,7 @@ public class Manager {
         String workerResultsQueueUrl = aws.getQueueUrl(AWS.WORKER_TO_MANAGER_QUEUE_NAME);
 
         System.out.println("Waiting for worker results...");
-        while (true) {
+        for (int i = 0; i < 6; i++) { //#TODO change it to a while loop that will pass everything later (did this to check it works)
             List<Message> workerMessages = aws.receiveMessagesFromSQS(workerResultsQueueUrl);
             if (workerMessages.isEmpty()) {
                 break;
@@ -180,14 +183,8 @@ public class Manager {
                 String workerMessageBody = workerMessage.body();
                 System.out.println("Received worker result: " + workerMessageBody);
                 results.add(workerMessageBody);
-                aws.deleteMessageFromSQS(AWS.WORKER_TO_MANAGER_QUEUE_NAME, workerMessage.receiptHandle());
-                System.out.println("Deleted processed worker message from queue.");
-            }
-
-            try {
-                Thread.sleep(1000); // 1 second delay
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                //aws.deleteMessageFromSQS(AWS.WORKER_TO_MANAGER_QUEUE_NAME, workerMessage.receiptHandle());
+                //System.out.println("Deleted processed worker message from queue.");
             }
         }
         return results;
@@ -213,23 +210,22 @@ public class Manager {
     // 6. (Taken from System Summary) Manager posts an SQS message about the summary
     // file
     private static void uploadFileToS3AndSQS(AWS aws, File summaryFile) {
+        String s3SummaryKey = "summary/" + summaryFile.getName();
+        String path = "";
         try {
-            String s3SummaryKey = "summary/" + summaryFile.getName();
-            aws.uploadFileToS3(s3SummaryKey, summaryFile);
-            System.out.println("Uploaded summary file to S3: s3://your-bucket-name/" + s3SummaryKey);
+            path = aws.uploadFileToS3(s3SummaryKey, summaryFile);
+            System.out.println("Uploaded summary file to S3: " + path);  // Corrected URL format
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to upload summary file to S3: " + e.getMessage());
         }
-
-        String summaryFilePath = summaryFile.getAbsolutePath();
-        String summaryMessage = "Summary file created: " + summaryFilePath;
-
+    
         try {
-            aws.sendMessageToSQS(AWS.LOCAL_MANAGER_QUEUE_NAME, summaryMessage);
+            aws.sendMessageToSQS(AWS.LOCAL_MANAGER_QUEUE_NAME, path);  // Corrected URL format
             System.out.println(
-                    "Message sent to LOCAL_MANAGER_QUEUE_NAME with summary file information: " + summaryMessage);
+                    "Message sent to LOCAL_MANAGER_QUEUE_NAME with summary file information: " + path);  // Corrected URL format
         } catch (Exception e) {
             System.err.println("[ERROR] Failed to send summary file message to SQS: " + e.getMessage());
         }
     }
+    
 }
