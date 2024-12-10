@@ -1,3 +1,4 @@
+<!-- Markdown file -->
 <!-- In VS code, use ctrl + shift + v to see preview -->
 <!-- In IntelliJ, Click the "Preview" icon (top-right) or use Ctrl/Cmd + Shift + A and search for "Markdown Preview." -->
 
@@ -9,13 +10,12 @@
 
 <br />
 
-If new dependencies are added, run the command: mvn clean package
-
-mvn dependency:copy-dependencies
-
-mvn package
-
-java -cp target/Assignment1-1.0-SNAPSHOT.jar:target/dependency/\* Assignment1.LocalApplication input-sample-1.txt outputFileName.txt 500 terminate
+1. Use the fatpom.xml: change fatpom.xml to pom.xml And pom.xml to oldpom.xml.
+   In the cmd run:
+2. mvn clean package (needed only if new dependencies are added)
+3. mvn dependency:copy-dependencies (needed only if new dependencies are added)
+4. mvn package
+5. java -cp target/Assignment1-1.0-SNAPSHOT.jar:target/dependency/\* Assignment1.LocalApplication input-sample-1.txt outputFileName.txt n terminate
 
 <br />
 <br />
