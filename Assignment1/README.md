@@ -10,11 +10,12 @@
 
 <br />
 
-1. Use the fatpom.xml: change fatpom.xml to pom.xml And pom.xml to oldpom.xml.
+1. Use the fatpom.xml: change fatpom.xml to pom.xml And pom.xml to originalPom.xml.
    In the cmd run:
 2. mvn clean package (needed only if new dependencies are added)
 3. mvn dependency:copy-dependencies (needed only if new dependencies are added)
 4. mvn package
+5. Swuch back to originalPom.xml (change it's name to pom.xml)
 5. java -cp target/Assignment1-1.0-SNAPSHOT.jar:target/dependency/\* Assignment1.LocalApplication input-sample-1.txt outputFileName.txt n terminate
 
 <br />
