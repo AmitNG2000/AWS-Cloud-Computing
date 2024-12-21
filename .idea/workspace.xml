@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8c0cbce6-7518-4b38-b3c9-b894cb897c72" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/DistributedBGU.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/Assignment2.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/artifacts/LocalApp_jar.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/artifacts/LocalApp_jar2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/src/main/java/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/src/main/java/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/src/main/java/WordCount.java" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/src/main/java/WordCount.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/target/classes/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/target/classes/App.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/target/classes/WordCount$MapperClass.class" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/target/classes/WordCount$MapperClass.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/target/classes/WordCount$PartitionerClass.class" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/target/classes/WordCount$PartitionerClass.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/target/classes/WordCount$ReducerClass.class" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/target/classes/WordCount$ReducerClass.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/target/classes/WordCount.class" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/target/classes/WordCount.class" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2qOeOB3KR5PkFH4wYtcVI1adfID" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/amitn/OneDrive/Desktop/DistributedBGU/Assignment2",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.40574712"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="DistributedBGU" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="DistributedBGU" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8c0cbce6-7518-4b38-b3c9-b894cb897c72" name="Changes" comment="" />
+      <created>1734538016112</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1734538016112</updated>
+    </task>
+    <servers />
+  </component>
+</project>
