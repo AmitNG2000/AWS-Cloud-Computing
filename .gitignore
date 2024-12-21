@@ -1,5 +1,7 @@
 Assignment1/target/
 Assignment1/.vscode
 
-Assignment2/target
-Assignment2/.vscode
+Assignment2/Hadoop/target
+
+*.class
+
