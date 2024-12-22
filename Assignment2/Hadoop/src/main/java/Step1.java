@@ -13,15 +13,22 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-public class WordCount {
+/**
+ *  Calculate the number single (w1), pairs (w1,w2) and trio (w1,w2,w3) in the corpus.
+ *
+ * @Input split from a text file
+ * @Output: ((w1), <LongWritable>), ((w1,w2), <LongWritable>), ((w1,w2,w3), <LongWritable>)
+ */
+public class Step1 {
 
-    public static class MapperClass extends Mapper<LongWritable, Text, Text, IntWritable> {
+    public static class MapperClass extends Mapper<LongWritable, Text, MyClasses.TextArrayWritable, LongWritable> {
         private final static IntWritable one = new IntWritable(1);
-        private Text word = new Text();
 
         @Override
-        public void map(LongWritable key, Text value, Context context) throws IOException,  InterruptedException {
-            StringTokenizer itr = new StringTokenizer(value.toString());
+        public void map(LongWritable key, Text sentence, Context context) throws IOException,  InterruptedException {
+        //TODO: comtinue from here
+
+            StringTokenizer itr = new StringTokenizer(sentence.toString());
             while (itr.hasMoreTokens()) {
                 word.set(itr.nextToken());
                 context.write(word, one);
@@ -52,7 +59,7 @@ public class WordCount {
         System.out.println(args.length > 0 ? args[0] : "no args");
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "Word Count");
-        job.setJarByClass(WordCount.class);
+        job.setJarByClass(Step1.class);
         job.setMapperClass(MapperClass.class);
         job.setPartitionerClass(PartitionerClass.class);
         job.setCombinerClass(ReducerClass.class);

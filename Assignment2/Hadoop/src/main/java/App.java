@@ -40,7 +40,7 @@ public class App {
 
         // Step 1
         HadoopJarStepConfig step1 = new HadoopJarStepConfig()
-                .withJar(String.format("%s/jars/WordCount.jar" , s3Path))
+                .withJar(String.format("%s/jars/Step1.jar" , s3Path))
                 .withMainClass("Step1");
 
         StepConfig stepConfig1 = new StepConfig()
