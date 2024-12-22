@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c0cbce6-7518-4b38-b3c9-b894cb897c72" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/Hadoop/src/main/java/WordCount.java" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/Hadoop/src/main/java/WordCount.java" afterDir="false" />
-    </list>
+    <list default="true" id="8c0cbce6-7518-4b38-b3c9-b894cb897c72" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -37,7 +33,7 @@
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/amitn/OneDrive/Desktop/DistributedBGU",
+    "last_opened_file_path": "C:/Users/amitn/OneDrive/Desktop/DistributedBGU/Assignment2/Hadoop",
     "project.structure.last.edited": "SDKs",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.40574712"
