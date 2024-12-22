@@ -15,8 +15,6 @@ import java.util.StringTokenizer;
 
 public class WordCount {
 
-    String s3Path = App.s3Path;
-
     public static class MapperClass extends Mapper<LongWritable, Text, Text, IntWritable> {
         private final static IntWritable one = new IntWritable(1);
         private Text word = new Text();

@@ -5,28 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c0cbce6-7518-4b38-b3c9-b894cb897c72" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/DistributedBGU.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/Assignment2.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/artifacts/LocalApp_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/artifacts/LocalApp_jar2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/jarRepositories.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/src/main/java/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/src/main/java/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/src/main/java/WordCount.java" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/src/main/java/WordCount.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/target/classes/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/target/classes/App.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/target/classes/WordCount$MapperClass.class" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/target/classes/WordCount$MapperClass.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/target/classes/WordCount$PartitionerClass.class" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/target/classes/WordCount$PartitionerClass.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/target/classes/WordCount$ReducerClass.class" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/target/classes/WordCount$ReducerClass.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment2/target/classes/WordCount.class" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/target/classes/WordCount.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment2/Hadoop/src/main/java/WordCount.java" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment2/Hadoop/src/main/java/WordCount.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,12 +31,13 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/amitn/OneDrive/Desktop/DistributedBGU/Assignment2",
+    "last_opened_file_path": "C:/Users/amitn/OneDrive/Desktop/DistributedBGU",
     "project.structure.last.edited": "SDKs",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.40574712"
