@@ -1,6 +1,0 @@
-results/output-a9a7dd30-1957-42d6-9ed1-f58d1d345978.png	ToImage	http://scheinerman.net/judaism/pesach/haggadah.pdf
-results/output-0841d060-8efa-4e06-bacc-b88f1c912206.png	ToImage	http://www.bethelnewton.org/images/Passover_Guide_BOOKLET.pdf
-results/output-9d6c55a1-5564-4822-9c46-eb4c872c00f9.txt	ToText	http://www.dgsdelicatessen.com/assets/DGS_Passover_Menu.pdf
-results/output-4bff52b8-1ae2-46e7-8bf4-8b26852f5077.png	ToImage	http://www.bethelnewton.org/images/Passover_Guide_BOOKLET.pdf
-results/output-97804d4a-7699-494e-95a8-efb4b5ae8ef0.png	ToImage	http://www.bethelnewton.org/images/Passover_Guide_BOOKLET.pdf
-results/output-08ddb052-c81c-4df8-978f-8ab364e045b5.png	ToImage	http://www.bethelnewton.org/images/Passover_Guide_BOOKLET.pdf
